@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,28 +8,102 @@
     <link rel="stylesheet" href="assets/css/styles.css">
     <title>Комментарии</title>
 </head>
+
 <body>
     <header></header>
     <main class="container">
         <div class="container__section">
             <div class="example-data__item"></div>
+            <div class="example-data__item"></div>
         </div>
         <div class="container__section">
-            <div class="separator"></div>
+            <div class="separator text__secondary"></div>
         </div>
         <div class="container__section">
             <div class="header">
-                <div class="header__item">Комментарии (80)</div>
-                <div class="header__item">По количеству оценок</div>
-                <div class="header__item">Избранное</div>
+                <div class="header__item">
+                    <p class="font-medium text-20">Комментарии <span class="text__secondary">(80)</span></p>
+                    <div class="separator"></div>
+                </div>
+                <div class="header__item"><span class="text__secondary underline">По количеству оценок <i class="icon icon__dropdown"></i></span></div>
+                <div class="header__item"><span class="text__secondary underline">Избранное</span><i class="icon icon__favorites"></i></div>
             </div>
             <div class="comments">
                 <div class="comment">
+                    <div class="comment__avatar"
+                        style="background-image: url('media/images/albert-dera-ILip77SbmOE-unsplash.png');"></div>
+                    <div class="comment__header">
+                        <div class="comment__header__item">
+                            <a href="#">Алексей_1994b</a>
+                        </div>
+                        <div class="comment__header__item">
+                            <span class="text__secondary">15.01 13:55</span>
+                        </div>
+                    </div>
+                    <div class="comment__body">
+                        <p>Самое обидное когда сценарий по сути есть - в виде книг, где нет сюжетных дыр, всё логично,
+                            стройное повествование и достаточно взять и экранизировать оригинал как это было в первых
+                            фильмах с минимальным количеством отсебятины и зритель с восторгом примет любой такой фильм
+                            и сериал, однако вместо этого 'Кольца власти' просто позаимствовали имена из оригинала,
+                            куски истории, мало связанные между собой и выдали очередной среднячковый сериал на один раз
+                            в лучшем случае.</p>
+                    </div>
+                    <div class="comment__footer">
+                        <div class="comment__footer__item">
+                            <a href="#" class="text__secondary"><i class="icon icon__answer"></i> Ответить</a>
+                        </div>
+                        <div class="comment__footer__item">
+                            <a href="#" class="text__secondary"><i class="icon icon__in-favorites"></i> В избранном</a>
 
+                        </div>
+                        <div class="comment__footer__item">
+
+                        </div>
+
+                    </div>
+                    <div class="comment__answers">
+                        <div class="comment">
+                            <div class="comment__avatar"
+                                style="background-image: url('media/images/mubariz-mehdizadeh-Py8F6-hRn5o-unsplash.png');">
+                            </div>
+                            <div class="comment__header">
+                                <div class="comment__header__item">
+                                    <a href="#">Джунбокс3000</a>
+                                </div>
+                                <div class="comment__header__item">
+                                    <a href="#"><span class="text__secondary">Алексей_1994b</span></a>
+                                </div>
+                                <div class="comment__header__item">
+                                    <span class="text__secondary">15.01 13:55</span>
+                                </div>
+                            </div>
+                            <div class="comment__body">
+                                <p>Наверное, самая большая ошибка создателей сериала была в том, что они поставили уж
+                                    слишком много надежд на поддержку фанатов вселенной. Как оказалось на деле,
+                                    большинство 'фанатов' с самой настоящей яростью и желчью стали уничтожать сериал,
+                                    при этом объективности в отзывах самый минимум.</p>
+                            </div>
+                            <div class="comment__footer">
+                                <div class="comment__footer__item">
+
+                                    <a href="#" class="text__secondary"><i class="icon icon__answer"></i> Ответить</a>
+                                </div>
+                                <div class="comment__footer__item">
+                                    <a href="#" class="text__secondary"><i class="icon icon__not-in-favorites"></i> В избранное</a>
+
+                                </div>
+                                <div class="comment__footer__item">
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
     <footer></footer>
 </body>
+
 </html>
