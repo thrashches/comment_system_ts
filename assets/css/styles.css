@@ -146,9 +146,11 @@ body {
     .container {
         width: 970px;
     }
+
     .container__section {
         padding: 0 86px;
     }
+
     .comment {
         grid-template-areas:
             "avatar header"
@@ -163,15 +165,15 @@ body {
     .container {
         width: 1170px;
     }
-    
-    
+
+
 }
 
 /* header */
 
 .header {
     display: flex;
-    gap    : 50px;
+    gap: 50px;
 }
 
 .header__item {
