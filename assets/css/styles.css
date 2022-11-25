@@ -71,6 +71,7 @@ button::-moz-focus-inner {
 
 a {
     color: #122AC0;
+    font-weight: 500;
     text-decoration: none;
 }
 
@@ -136,6 +137,49 @@ body {
     height: 170px;
 }
 
+/* comments */
+
+.comment {
+    display: grid;
+    column-gap: 18px;
+    row-gap: 10px;
+    grid-template-areas: 
+        "avatar header"
+        "body body"
+        "footer footer"
+        "answers answers";
+}
+
+.comment__avatar {
+    width: 61px;
+    height: 61px;
+    border-radius: 30px;
+    background-position: center;
+    grid-area: avatar;
+}
+
+.comment__header {
+    grid-area: header;
+    display: flex;
+    gap: 10px;
+    font-size: 18px;
+}
+
+.comment__body {
+    grid-area: body;
+    font-size: 18px;
+}
+
+.comment__footer {
+    display: flex;
+    gap: 15px;
+    grid-area: footer;
+}
+
+.comment__answers {
+    grid-area: answers;
+}
+
 @media (min-width: 768px) {
     .container {
         width: 750px;
@@ -178,44 +222,6 @@ body {
 
 .header__item {
     gap: 5px;
-}
-
-/* comments */
-
-.comment {
-    display: grid;
-    column-gap: 18px;
-    row-gap: 10px;
-}
-
-.comment__avatar {
-    width: 61px;
-    height: 61px;
-    border-radius: 30px;
-    background-position: center;
-    grid-area: avatar;
-}
-
-.comment__header {
-    grid-area: header;
-    display: flex;
-    gap: 10px;
-    font-size: 18px;
-}
-
-.comment__body {
-    grid-area: body;
-    font-size: 18px;
-}
-
-.comment__footer {
-    display: flex;
-    gap: 15px;
-    grid-area: footer;
-}
-
-.comment__answers {
-    grid-area: answers;
 }
 
 .text__secondary {
