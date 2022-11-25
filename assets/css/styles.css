@@ -110,7 +110,8 @@ body {
 } */
 
 .container {
-    /* padding: 0 15px; */
+    min-height: 100%;
+    padding: 0 15px;
     margin: 0 auto;
     background-color: white;
     display: flex;
@@ -148,6 +149,7 @@ body {
         "body body"
         "footer footer"
         "answers answers";
+        grid-template-columns: 61px 1fr;
 }
 
 .comment__avatar {
@@ -163,17 +165,21 @@ body {
     display: flex;
     gap: 10px;
     font-size: 18px;
+    align-items: baseline;
 }
 
 .comment__body {
     grid-area: body;
     font-size: 18px;
+    display: flex;
+    gap: 20px;
 }
 
 .comment__footer {
     display: flex;
     gap: 15px;
     grid-area: footer;
+    align-items: baseline;
 }
 
 .comment__answers {
@@ -199,7 +205,6 @@ body {
         grid-template-areas:
             "avatar header"
             "avatar body"
-            /* ". body" */
             ". footer"
             ". answers"
     }
@@ -218,6 +223,7 @@ body {
 .header {
     display: flex;
     gap: 50px;
+    align-items: center;
 }
 
 .header__item {
@@ -227,6 +233,10 @@ body {
 .text__secondary {
     color: #000000;
     opacity: 0.4;
+}
+
+.text-14 {
+    font-size: 14px;
 }
 
 .font-medium {
@@ -239,6 +249,16 @@ body {
 
 .underline {
     text-decoration: underline;
+}
+
+.comment__input {
+    background: #FFFFFF;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    width: 100%;
+    padding: 20px 30px;
+    font-size: 18px;
+    resize: none;
 }
 
 .icon {
@@ -261,7 +281,7 @@ body {
     height: 0px;
     border-style: solid;
     /* border: 3px 3px 0 3px solid #000000; */
-    border-width: 11.3px 6.5px 0 6.5px;
+    border-width: 13.9px 8px 0 8px;
     border-color: #000000 transparent transparent transparent;
     /* transform: rotate(90deg); */
 }
@@ -282,4 +302,21 @@ body {
     width: 24px;
     height: 24px;
     background-image: url('../svg/not_in_favorites.svg');
+}
+
+.btn {
+    padding: 0 59px;
+    border-radius: 5px;
+    font-size: 18px;
+    height: 61px;
+}
+
+.btn__default {
+    opacity: 0.4;
+    background: #A1A1A1;
+}
+
+.btn__success {
+    background: #ABD873;
+    color: #000000;
 }
