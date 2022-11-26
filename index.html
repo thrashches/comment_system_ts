@@ -33,18 +33,22 @@
             <div class="comments">
                 <div class="comment">
                     <div class="comment__avatar"
-                        style="background-image: url('media/images/samsung-memory-hjRC0i0oJxg-unsplash 1.png');"
-                    ></div>
+                        style="background-image: url('media/images/samsung-memory-hjRC0i0oJxg-unsplash 1.png');"></div>
                     <div class="comment__header">
                         <div class="comment__header__item">
                             <a href="#">Максим Авдеенко</a>
-                        </div>    
+                        </div>
                     </div>
                     <div class="comment__body">
-                        <textarea name="comment" id="commentInput" class="comment__input" cols="30" rows="1"
-                            placeholder="Введите текст сообщения..."
-                        ></textarea>
-                        <button class="btn btn__default">Отправить</button>
+                        <div class="flex-wrapper w-100 top-offset">
+                            <p class="text__secondary text-14 counter" id="counterP"><span id="counter">0</span>/1000</p>
+                            <textarea name="comment" id="commentInput" class="comment__input" cols="30" rows="1"
+                                placeholder="Введите текст сообщения..."></textarea>
+                        </div>
+                        <div class="flex-wrapper" id="btnWrapper">
+                            <button class="btn btn__default" id="sendBtn">Отправить</button>
+                        </div>
+
                     </div>
                     <div class="comment__footer"></div>
                 </div>
@@ -90,7 +94,8 @@
                                     <a href="#">Джунбокс3000</a>
                                 </div>
                                 <div class="comment__header__item">
-                                    <a href="#"><span class="text__secondary"><i class="icon icon__answer"></i> Алексей_1994b</span></a>
+                                    <a href="#"><span class="text__secondary"><i class="icon icon__answer"></i>
+                                            Алексей_1994b</span></a>
                                 </div>
                                 <div class="comment__header__item">
                                     <span class="text__secondary text-14">15.01 13:55</span>
@@ -124,6 +129,7 @@
         </div>
     </main>
     <footer></footer>
+    <script src="index.js"></script>
 </body>
 
 </html>

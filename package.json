@@ -1,0 +1,22 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "frontend for comment system",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thrashches/comment_system_ts.git"
+  },
+  "author": "thrashches",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thrashches/comment_system_ts/issues"
+  },
+  "homepage": "https://github.com/thrashches/comment_system_ts#readme",
+  "dependencies": {
+    "typescript": "^4.9.3"
+  }
+}
