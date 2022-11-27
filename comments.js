@@ -1,71 +1,6 @@
-// Поле ввода комментария
-var commentInput = (document.getElementById("commentInput"));
-// div вокруг кнопки
-var btnWrapper = (document.getElementById("btnWrapper"));
-// Кнопка создания комментария
-var sendBtn = (document.getElementById("sendBtn"));
-// Количество введенных символов в поле ввода
-var counter = (document.getElementById("counter"));
-// Параграф со счетчиком
-var counterP = (document.getElementById("counterP"));
-commentInput.addEventListener("focusin", function () {
-    // Подветка кнопки и разворот инпута при фокусе
-    commentInput.setAttribute("rows", "8");
-    sendBtn.classList.replace("btn__default", "btn__success");
-});
-commentInput.addEventListener("focusout", function () {
-    // Затемнение кнопки и сворачивание инпута при расфокусе
-    commentInput.setAttribute("rows", "1");
-    sendBtn.classList.replace("btn__success", "btn__default");
-});
-commentInput.addEventListener("input", function () {
-    // Работа счетчика символов
-    var newCommentLength = commentInput.value.length;
-    counter.textContent = newCommentLength.toString();
-    if (newCommentLength > 1000) {
-        var warningMessage = document.createElement("p");
-        warningMessage.setAttribute("id", "warningMessage");
-        warningMessage.classList.add("text__warning");
-        warningMessage.classList.add("text-14");
-        warningMessage.innerText = "Слишком длинное сообщение";
-        btnWrapper.classList.add("top-offset");
-        counterP.classList.replace("text__secondary", "text__warning");
-        sendBtn.disabled = true;
-        sendBtn.classList.replace("btn__success", "btn__default");
-        btnWrapper.insertBefore(warningMessage, sendBtn);
-    }
-    else {
-        var warningMessage = document.getElementById("warningMessage");
-        if (warningMessage) {
-            sendBtn.disabled = false;
-            sendBtn.classList.replace("btn__default", "btn__success");
-            warningMessage.remove();
-            btnWrapper.classList.remove("top-offset");
-            counterP.classList.replace("text__warning", "text__secondary");
-        }
-    }
-});
-function addComment() {
-    // Добавление нового комментария на страницу
-    if (commentInput.value.length) {
-        var user = testUsers[0];
-        var newComment = new PostComment(user, commentInput.value);
-        var element = newComment.getHTMLElement();
-        var comments = (document.getElementById("comments"));
-        comments.appendChild(element);
-        commentInput.value = "";
-        counter.innerText = "0";
-        newComment.saveToLocalStorage();
-    }
-}
-sendBtn.addEventListener("click", function () {
-    addComment();
-});
-commentInput.addEventListener("keypress", function (e) {
-    if (e.key === "Enter" && e.ctrlKey) {
-        addComment();
-    }
-});
+"use strict";
+exports.__esModule = true;
+exports.PostComment = exports.User = void 0;
 function getSavedComments() {
     // Загрузка сохраненных комментариев
     var commentsString = window.localStorage.getItem("comments");
@@ -82,6 +17,7 @@ var User = /** @class */ (function () {
     }
     return User;
 }());
+exports.User = User;
 var PostComment = /** @class */ (function () {
     function PostComment(user, text, published) {
         this.rating = 0;
@@ -201,6 +137,7 @@ var PostComment = /** @class */ (function () {
         commentDiv.appendChild(this.getHeader());
         commentDiv.appendChild(this.getBody());
         commentDiv.appendChild(this.getFooter());
+        console.log(JSON.stringify(this));
         return commentDiv;
     };
     PostComment.prototype.saveToLocalStorage = function () {
@@ -215,18 +152,4 @@ var PostComment = /** @class */ (function () {
     };
     return PostComment;
 }());
-var testUsers = [
-    new User(1, "Максим Авдеенко", "https://picsum.photos/id/1/100"),
-    new User(2, "Алексей_1994b", "https://picsum.photos/id/2/100"),
-    new User(3, "Джунбокс3000", "https://picsum.photos/id/3/100"),
-];
-var savedComments = getSavedComments();
-if (savedComments) {
-    for (var _i = 0, savedComments_1 = savedComments; _i < savedComments_1.length; _i++) {
-        var commentData = savedComments_1[_i];
-        var user = new User(commentData.user.id, commentData.user.fullName, commentData.user.avatar);
-        var comment = new PostComment(user, commentData.text, commentData.published);
-        var comments = document.getElementById('comments');
-        comments.appendChild(comment.getHTMLElement());
-    }
-}
+exports.PostComment = PostComment;

@@ -1,92 +1,3 @@
-// Поле ввода комментария
-const commentInput: HTMLTextAreaElement = <HTMLTextAreaElement>(
-  document.getElementById("commentInput")
-);
-
-// div вокруг кнопки
-const btnWrapper: HTMLElement = <HTMLElement>(
-  document.getElementById("btnWrapper")
-);
-
-// Кнопка создания комментария
-const sendBtn: HTMLButtonElement = <HTMLButtonElement>(
-  document.getElementById("sendBtn")
-);
-
-// Количество введенных символов в поле ввода
-const counter: HTMLSpanElement = <HTMLSpanElement>(
-  document.getElementById("counter")
-);
-
-// Параграф со счетчиком
-const counterP: HTMLParagraphElement = <HTMLParagraphElement>(
-  document.getElementById("counterP")
-);
-
-commentInput.addEventListener("focusin", () => {
-  // Подветка кнопки и разворот инпута при фокусе
-  commentInput.setAttribute("rows", "8");
-  sendBtn.classList.replace("btn__default", "btn__success");
-});
-commentInput.addEventListener("focusout", () => {
-  // Затемнение кнопки и сворачивание инпута при расфокусе
-  commentInput.setAttribute("rows", "1");
-  sendBtn.classList.replace("btn__success", "btn__default");
-});
-commentInput.addEventListener("input", () => {
-  // Работа счетчика символов
-  const newCommentLength: number = commentInput.value.length;
-  counter.textContent = newCommentLength.toString();
-  if (newCommentLength > 1000) {
-    const warningMessage: HTMLParagraphElement = document.createElement("p");
-    warningMessage.setAttribute("id", "warningMessage");
-    warningMessage.classList.add("text__warning");
-    warningMessage.classList.add("text-14");
-    warningMessage.innerText = "Слишком длинное сообщение";
-    btnWrapper.classList.add("top-offset");
-    counterP.classList.replace("text__secondary", "text__warning");
-    sendBtn.disabled = true;
-    sendBtn.classList.replace("btn__success", "btn__default");
-    btnWrapper.insertBefore(warningMessage, sendBtn);
-  } else {
-    const warningMessage: HTMLElement | null =
-      document.getElementById("warningMessage");
-    if (warningMessage) {
-      sendBtn.disabled = false;
-      sendBtn.classList.replace("btn__default", "btn__success");
-      warningMessage.remove();
-      btnWrapper.classList.remove("top-offset");
-      counterP.classList.replace("text__warning", "text__secondary");
-    }
-  }
-});
-
-function addComment() {
-  // Добавление нового комментария на страницу
-  if (commentInput.value.length) {
-    const user: User = testUsers[0];
-    const newComment: PostComment = new PostComment(user, commentInput.value);
-    const element: HTMLElement = newComment.getHTMLElement();
-    const comments: HTMLElement = <HTMLElement>(
-      document.getElementById("comments")
-    );
-    comments.appendChild(element);
-    commentInput.value = "";
-    counter.innerText = "0";
-    newComment.saveToLocalStorage();
-  }
-}
-
-sendBtn.addEventListener("click", () => {
-  addComment();
-});
-
-commentInput.addEventListener("keypress", (e) => {
-  if (e.key === "Enter" && e.ctrlKey) {
-    addComment();
-  }
-});
-
 function getSavedComments(): Array<PostComment> | null {
   // Загрузка сохраненных комментариев
   const commentsString: string | null = window.localStorage.getItem("comments");
@@ -252,6 +163,7 @@ class PostComment {
     commentDiv.appendChild(this.getHeader());
     commentDiv.appendChild(this.getBody());
     commentDiv.appendChild(this.getFooter());
+    console.log(JSON.stringify(this));
     return commentDiv;
   }
 
@@ -266,26 +178,4 @@ class PostComment {
   }
 }
 
-const testUsers = [
-  new User(1, "Максим Авдеенко", "https://picsum.photos/id/1/100"),
-  new User(2, "Алексей_1994b", "https://picsum.photos/id/2/100"),
-  new User(3, "Джунбокс3000", "https://picsum.photos/id/3/100"),
-];
-
-const savedComments = getSavedComments();
-if (savedComments) {
-  for (let commentData of savedComments) {
-    const user = new User(
-      commentData.user.id,
-      commentData.user.fullName,
-      commentData.user.avatar
-    );
-    const comment = new PostComment(
-      user,
-      commentData.text,
-      commentData.published
-    );
-    const comments: HTMLElement = <HTMLElement>document.getElementById('comments')
-    comments.appendChild(comment.getHTMLElement());
-  }
-}
+export { User, PostComment };
