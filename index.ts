@@ -1,3 +1,6 @@
+// id комментариев для проверки на уникальность и назначения следующего id
+const commentIds: Array<number> = new Array();
+
 // Поле ввода комментария
 const commentInput: HTMLTextAreaElement = <HTMLTextAreaElement>(
   document.getElementById("commentInput")
@@ -61,6 +64,33 @@ commentInput.addEventListener("input", () => {
   }
 });
 
+function loadSavedCommentIds() {
+  // Загрузка занятых id комментариев из localStorage
+  const savedIdsstring: string | null =
+    window.localStorage.getItem("commentIds");
+  if (
+    !savedIdsstring ||
+    JSON.parse(savedIdsstring).length < commentIds.length
+  ) {
+    window.localStorage.setItem("commentIds", JSON.stringify(commentIds));
+  }
+}
+
+function getUniqueCommentId(): number {
+  // Генерация нового id комментария
+  loadSavedCommentIds();
+  if (!commentIds.length) {
+    commentIds.push(1);
+    window.localStorage.setItem("commentIds", JSON.stringify(commentIds));
+    return 1;
+  } else {
+    const newId: number = Math.max(...commentIds) + 1;
+    commentIds.push(newId);
+    window.localStorage.setItem("commentIds", JSON.stringify(commentIds));
+    return newId;
+  }
+}
+
 function addComment() {
   // Добавление нового комментария на страницу
   if (commentInput.value.length) {
@@ -111,19 +141,23 @@ class User {
 
 class PostComment {
   // Класс комментария
+  id: number;
   user: User;
   text: string;
   published: number;
   rating: number = 0;
   favorited: boolean = false;
-  replyTo: PostComment | null = null;
+  replyTo: number | null = null;
 
-  constructor(user: User, text: string, published?: number) {
-    if (published) {
+  constructor(user: User, text: string, published?: number, id?: number) {
+    if (published && id) {
       this.published = published;
+      this.id = id;
     } else {
       this.published = Date.now();
+      this.id = getUniqueCommentId();
     }
+
     this.text = text;
     this.user = user;
   }
@@ -248,6 +282,7 @@ class PostComment {
     // div с комментарием, аватаром и тд
     const commentDiv = document.createElement("div");
     commentDiv.classList.add("comment");
+    commentDiv.setAttribute("id", `comment${this.id}`);
     commentDiv.appendChild(this.getAvatar());
     commentDiv.appendChild(this.getHeader());
     commentDiv.appendChild(this.getBody());
@@ -257,6 +292,7 @@ class PostComment {
 
   saveToLocalStorage() {
     const storage: Array<PostComment> | null = getSavedComments();
+
     if (storage) {
       storage.push(this);
       window.localStorage.setItem("comments", JSON.stringify(storage));
@@ -274,18 +310,19 @@ const testUsers = [
 
 const savedComments = getSavedComments();
 if (savedComments) {
+  const mainIds: Array<number> = new Array();
   for (let commentData of savedComments) {
-    const user = new User(
-      commentData.user.id,
-      commentData.user.fullName,
-      commentData.user.avatar
-    );
-    const comment = new PostComment(
-      user,
-      commentData.text,
-      commentData.published
-    );
-    const comments: HTMLElement = <HTMLElement>document.getElementById('comments')
-    comments.appendChild(comment.getHTMLElement());
+    if (!commentData.replyTo) {
+      const commentObj = new PostComment(
+        commentData.user,
+        commentData.text,
+        commentData.published,
+        commentData.id
+      );
+      const comments: HTMLElement = <HTMLElement>(
+        document.getElementById("comments")
+      );
+      comments.appendChild(commentObj.getHTMLElement());
+    }
   }
 }
