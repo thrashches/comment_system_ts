@@ -48,6 +48,12 @@ commentInput.addEventListener("input", () => {
         }
     }
 });
+function moveCommentInput(id) {
+    // Перемещает поле ввода комментария внутри DOM для написания ответов
+    const commentInputWrapper = (document.querySelector("#commentInputWrapper"));
+    const replysToInputSeparator = document.querySelector(`#replysToInputSeparator${id}`);
+    replysToInputSeparator?.before(commentInputWrapper);
+}
 function loadSavedCommentIds() {
     // Загрузка занятых id комментариев из localStorage
     const savedIdsstring = window.localStorage.getItem("commentIds");
@@ -71,13 +77,23 @@ function getUniqueCommentId() {
         return newId;
     }
 }
-function addComment() {
+function getCommentsBlock(replyTo) {
+    // Возвращет блок коментариев, в который необходимо добавить новый комментарий
+    if (replyTo) {
+        return document.getElementById(`replysTo${replyTo}`);
+    }
+    return document.getElementById("comments");
+}
+function addComment(replyTo) {
     // Добавление нового комментария на страницу
     if (commentInput.value.length) {
         const user = testUsers[0];
         const newComment = new PostComment(user, commentInput.value);
+        if (replyTo) {
+            newComment.setReplyTo(replyTo);
+        }
+        const comments = getCommentsBlock(replyTo);
         const element = newComment.getHTMLElement();
-        const comments = (document.getElementById("comments"));
         comments.appendChild(element);
         commentInput.value = "";
         counter.innerText = "0";
@@ -85,7 +101,14 @@ function addComment() {
     }
 }
 sendBtn.addEventListener("click", () => {
-    addComment();
+    const commentInputWrapper = (document.getElementById("commentInputWrapper"));
+    if (commentInputWrapper.parentElement?.hasAttribute("data-reply-to")) {
+        const replyTo = parseInt(commentInputWrapper.parentElement.dataset.replyTo);
+        addComment(replyTo);
+    }
+    else {
+        addComment();
+    }
 });
 commentInput.addEventListener("keypress", (e) => {
     if (e.key === "Enter" && e.ctrlKey) {
@@ -122,6 +145,10 @@ class PostComment {
         }
         this.text = text;
         this.user = user;
+    }
+    setReplyTo(replyTo) {
+        // Сеттер id комментария, на который написан ответ
+        this.replyTo = replyTo;
     }
     getAvatar() {
         // Элемент аватара
@@ -175,6 +202,9 @@ class PostComment {
     }
     getAnswerBtn() {
         // Кнопка ответить
+        if (this.replyTo) {
+            return null;
+        }
         const answerBtnWrapper = this.getWrappedItem("comment__footer__item");
         const answerIcon = document.createElement("i");
         answerIcon.classList.add("icon");
@@ -183,7 +213,11 @@ class PostComment {
         answerA.appendChild(answerIcon);
         answerA.innerHTML += " Ответить";
         answerA.classList.add("text__secondary");
-        answerA.href = "#";
+        // answerA.href = "#";
+        answerA.setAttribute("id", `replyTo${this.id}`);
+        answerA.addEventListener("click", () => {
+            moveCommentInput(this.id);
+        });
         answerBtnWrapper.appendChild(answerA);
         return answerBtnWrapper;
     }
@@ -206,7 +240,7 @@ class PostComment {
         else {
             favoriteA.innerHTML += " В избранное";
         }
-        favoriteA.href = "#";
+        // favoriteA.href = "#";
         favoriteA.classList.add("text__secondary");
         favoriteBtnWrapper.appendChild(favoriteA);
         return favoriteBtnWrapper;
@@ -216,7 +250,9 @@ class PostComment {
         const footer = this.getWrappedItem("comment__footer");
         const answerBtnWrapper = this.getAnswerBtn();
         const favoriteBtnWrapper = this.getFavoriteBtn();
-        footer.appendChild(answerBtnWrapper);
+        if (answerBtnWrapper) {
+            footer.appendChild(answerBtnWrapper);
+        }
         footer.appendChild(favoriteBtnWrapper);
         return footer;
     }
@@ -229,9 +265,17 @@ class PostComment {
         commentDiv.appendChild(this.getHeader());
         commentDiv.appendChild(this.getBody());
         commentDiv.appendChild(this.getFooter());
+        if (!this.replyTo) {
+            const answers = this.getWrappedItem("comment__answers");
+            answers.setAttribute("id", `replysTo${this.id}`);
+            answers.setAttribute("data-reply-to", this.id.toString());
+            answers.innerHTML = `<div id="replysToInputSeparator${this.id}" hidden></div>`;
+            commentDiv.appendChild(answers);
+        }
         return commentDiv;
     }
     saveToLocalStorage() {
+        // Сохранение комментариев
         const storage = getSavedComments();
         if (storage) {
             storage.push(this);

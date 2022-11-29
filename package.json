@@ -4,6 +4,7 @@
   "description": "frontend for comment system",
   "main": "index.js",
   "scripts": {
+    "build": "npx tsc -p .",
     "test": "test"
   },
   "repository": {
