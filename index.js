@@ -48,11 +48,21 @@ commentInput.addEventListener("input", () => {
         }
     }
 });
+function getRandomUser() {
+    // Получение случайного пользователя
+    return testUsers[Math.floor(Math.random() * testUsers.length)];
+}
 function moveCommentInput(id) {
     // Перемещает поле ввода комментария внутри DOM для написания ответов
     const commentInputWrapper = (document.querySelector("#commentInputWrapper"));
-    const replysToInputSeparator = document.querySelector(`#replysToInputSeparator${id}`);
-    replysToInputSeparator?.before(commentInputWrapper);
+    if (id) {
+        const replysToInputSeparator = document.querySelector(`#replysToInputSeparator${id}`);
+        replysToInputSeparator?.before(commentInputWrapper);
+    }
+    else {
+        const commentInputSeparator = document.querySelector("#commentInputSeparator");
+        commentInputSeparator?.before(commentInputWrapper);
+    }
 }
 function loadSavedCommentIds() {
     // Загрузка занятых id комментариев из localStorage
@@ -98,6 +108,7 @@ function addComment(replyTo) {
         commentInput.value = "";
         counter.innerText = "0";
         newComment.saveToLocalStorage();
+        moveCommentInput();
     }
 }
 sendBtn.addEventListener("click", () => {
@@ -110,11 +121,11 @@ sendBtn.addEventListener("click", () => {
         addComment();
     }
 });
-commentInput.addEventListener("keypress", (e) => {
-    if (e.key === "Enter" && e.ctrlKey) {
-        addComment();
-    }
-});
+// commentInput.addEventListener("keypress", (e) => {
+//   if (e.key === "Enter" && e.ctrlKey) {
+//     addComment();
+//   }
+// });
 function getSavedComments() {
     // Загрузка сохраненных комментариев
     const commentsString = window.localStorage.getItem("comments");
@@ -149,6 +160,16 @@ class PostComment {
     setReplyTo(replyTo) {
         // Сеттер id комментария, на который написан ответ
         this.replyTo = replyTo;
+    }
+    setFavorited(favorited) {
+        // Сеттер для favorited
+        this.favorited = favorited;
+    }
+    switchFavorited() {
+        // Переключает нахождение в избранном
+        this.favorited = !this.favorited;
+        this.removeFromLocalStorage();
+        this.saveToLocalStorage();
     }
     getAvatar() {
         // Элемент аватара
@@ -242,6 +263,9 @@ class PostComment {
         }
         // favoriteA.href = "#";
         favoriteA.classList.add("text__secondary");
+        favoriteA.addEventListener("click", () => {
+            this.switchFavorited();
+        });
         favoriteBtnWrapper.appendChild(favoriteA);
         return favoriteBtnWrapper;
     }
@@ -285,6 +309,20 @@ class PostComment {
             window.localStorage.setItem("comments", JSON.stringify([this]));
         }
     }
+    removeFromLocalStorage() {
+        const storage = getSavedComments();
+        console.log(storage);
+        if (storage) {
+            for (let index = 0; index <= storage.length; index++) {
+                console.log(storage[index]);
+                if (storage[index].id === this.id) {
+                    console.log('zzzzzzzzzzzzzzzz');
+                    storage.splice(index, 1);
+                    localStorage.setItem("comments", JSON.stringify(storage));
+                }
+            }
+        }
+    }
 }
 const testUsers = [
     new User(1, "Максим Авдеенко", "https://picsum.photos/id/1/100"),
@@ -297,7 +335,17 @@ if (savedComments) {
     for (let commentData of savedComments) {
         if (!commentData.replyTo) {
             const commentObj = new PostComment(commentData.user, commentData.text, commentData.published, commentData.id);
+            commentObj.setFavorited(commentData.favorited);
             const comments = (document.getElementById("comments"));
+            comments.appendChild(commentObj.getHTMLElement());
+        }
+    }
+    for (let commentData of savedComments) {
+        if (commentData.replyTo) {
+            const commentObj = new PostComment(commentData.user, commentData.text, commentData.published, commentData.id);
+            commentObj.setFavorited(commentData.favorited);
+            commentObj.setReplyTo(commentData.replyTo);
+            const comments = getCommentsBlock(commentData.replyTo);
             comments.appendChild(commentObj.getHTMLElement());
         }
     }

@@ -64,16 +64,28 @@ commentInput.addEventListener("input", () => {
   }
 });
 
-function moveCommentInput(id: number) {
+function getRandomUser(): User {
+  // Получение случайного пользователя
+  return testUsers[Math.floor(Math.random() * testUsers.length)];
+}
+
+function moveCommentInput(id?: number) {
   // Перемещает поле ввода комментария внутри DOM для написания ответов
   const commentInputWrapper: Element = <Element>(
     document.querySelector("#commentInputWrapper")
   );
 
-  const replysToInputSeparator = document.querySelector(
-    `#replysToInputSeparator${id}`
-  );
-  replysToInputSeparator?.before(commentInputWrapper);
+  if (id) {
+    const replysToInputSeparator = document.querySelector(
+      `#replysToInputSeparator${id}`
+    );
+    replysToInputSeparator?.before(commentInputWrapper);
+  } else {
+    const commentInputSeparator = document.querySelector(
+      "#commentInputSeparator"
+    );
+    commentInputSeparator?.before(commentInputWrapper);
+  }
 }
 
 function loadSavedCommentIds() {
@@ -126,6 +138,7 @@ function addComment(replyTo?: number) {
     commentInput.value = "";
     counter.innerText = "0";
     newComment.saveToLocalStorage();
+    moveCommentInput();
   }
 }
 
@@ -143,11 +156,11 @@ sendBtn.addEventListener("click", () => {
   }
 });
 
-commentInput.addEventListener("keypress", (e) => {
-  if (e.key === "Enter" && e.ctrlKey) {
-    addComment();
-  }
-});
+// commentInput.addEventListener("keypress", (e) => {
+//   if (e.key === "Enter" && e.ctrlKey) {
+//     addComment();
+//   }
+// });
 
 function getSavedComments(): Array<PostComment> | null {
   // Загрузка сохраненных комментариев
@@ -197,6 +210,18 @@ class PostComment {
   setReplyTo(replyTo: number | null) {
     // Сеттер id комментария, на который написан ответ
     this.replyTo = replyTo;
+  }
+
+  setFavorited(favorited: boolean) {
+    // Сеттер для favorited
+    this.favorited = favorited;
+  }
+
+  switchFavorited() {
+    // Переключает нахождение в избранном
+    this.favorited = !this.favorited;
+    this.removeFromLocalStorage();
+    this.saveToLocalStorage();
   }
 
   getAvatar(): HTMLElement {
@@ -308,6 +333,9 @@ class PostComment {
     }
     // favoriteA.href = "#";
     favoriteA.classList.add("text__secondary");
+    favoriteA.addEventListener("click", () => {
+      this.switchFavorited();
+    });
     favoriteBtnWrapper.appendChild(favoriteA);
     return favoriteBtnWrapper;
   }
@@ -354,6 +382,21 @@ class PostComment {
       window.localStorage.setItem("comments", JSON.stringify([this]));
     }
   }
+
+  removeFromLocalStorage() {
+    const storage: Array<PostComment> | null = getSavedComments();
+    console.log(storage)
+    if (storage) {
+      for (let index = 0; index <= storage.length; index++) {
+        console.log(storage[index])
+        if (storage[index].id === this.id) {
+          console.log('zzzzzzzzzzzzzzzz')
+          storage.splice(index, 1);
+          localStorage.setItem("comments", JSON.stringify(storage));
+        }
+      }
+    }
+  }
 }
 
 const testUsers = [
@@ -373,9 +416,24 @@ if (savedComments) {
         commentData.published,
         commentData.id
       );
+      commentObj.setFavorited(commentData.favorited);
       const comments: HTMLElement = <HTMLElement>(
         document.getElementById("comments")
       );
+      comments.appendChild(commentObj.getHTMLElement());
+    }
+  }
+  for (let commentData of savedComments) {
+    if (commentData.replyTo) {
+      const commentObj = new PostComment(
+        commentData.user,
+        commentData.text,
+        commentData.published,
+        commentData.id
+      );
+      commentObj.setFavorited(commentData.favorited);
+      commentObj.setReplyTo(commentData.replyTo);
+      const comments: HTMLElement = getCommentsBlock(commentData.replyTo);
       comments.appendChild(commentObj.getHTMLElement());
     }
   }
