@@ -1,20 +1,5 @@
 import { CommentType } from "./types.js";
 
-// id комментариев для проверки на уникальность и назначения следующего id
-const commentIds: Array<number> = new Array();
-
-function loadSavedCommentIds() {
-  // Загрузка занятых id комментариев из localStorage
-  const savedIdsstring: string | null =
-    window.localStorage.getItem("commentIds");
-  if (
-    !savedIdsstring ||
-    JSON.parse(savedIdsstring).length < commentIds.length
-  ) {
-    window.localStorage.setItem("commentIds", JSON.stringify(commentIds));
-  }
-}
-
 function initEmptyCommentsStorage() {
   window.localStorage.setItem("comments", "[]");
   return new Array();
@@ -22,30 +7,11 @@ function initEmptyCommentsStorage() {
 
 function getUniqueCommentId(): number {
   // Генерация нового id комментария
-  loadSavedCommentIds();
-  if (!commentIds.length) {
-    commentIds.push(1);
-    window.localStorage.setItem("commentIds", JSON.stringify(commentIds));
-    return 1;
-  } else {
-    const newId: number = Math.max(...commentIds) + 1;
-    commentIds.push(newId);
-    window.localStorage.setItem("commentIds", JSON.stringify(commentIds));
-    return newId;
+  const commentIds = getSavedComments()?.map((comment) => comment.id);
+  if (commentIds?.length) {
+    return Math.max(...commentIds) + 1;
   }
-}
-
-function getSavedCommentIds(): Array<number> | null {
-  const commentIdsString = window.localStorage.getItem("commentIds");
-  if (commentIdsString) {
-    return JSON.parse(commentIdsString);
-  }
-  return null;
-}
-
-function initEmptyCommentIds(): Array<number> {
-  window.localStorage.setItem("commentIds", "[]");
-  return new Array();
+  return 1;
 }
 
 function getSavedComments(): Array<CommentType> | null {
@@ -60,7 +26,6 @@ function getSavedComments(): Array<CommentType> | null {
 class Storage {
   // Класс для чтения и сохранения в localStorage
   comments: Array<CommentType>;
-  commentIds: Array<number>;
 
   constructor() {
     const savedComments = getSavedComments();
@@ -69,22 +34,15 @@ class Storage {
     } else {
       this.comments = initEmptyCommentsStorage();
     }
-    const savedCommentIds = getSavedCommentIds();
-    if (savedCommentIds) {
-      this.commentIds = savedCommentIds;
-    } else {
-      this.commentIds = initEmptyCommentIds();
-    }
   }
 
   public getCommentData(id: number): CommentType | null {
     // Получение из localStorage по id
-    if (id in this.commentIds) {
-      for (let commentData of this.comments) {
-        if (commentData.id === id) {
-          return commentData;
-        }
-      }
+    const commentIndex: number | undefined = this.comments.findIndex(
+      (obj) => obj.id == id
+    );
+    if (!isNaN(commentIndex)) {
+      return this.comments[commentIndex];
     }
     return null;
   }
@@ -107,14 +65,15 @@ class Storage {
   }
 
   public updateCommentData(id: number, data: CommentType): void {
-      this.removeCommentData(id);
-      this.addCommentData(data);
+    const commentIndex = this.comments.findIndex((obj) => obj.id == id);
+    this.comments[commentIndex] = data;
+    console.log(data)
+    this.save();
   }
 
   save() {
     // Синхронизация с localStorage
     window.localStorage.setItem("comments", JSON.stringify(this.comments));
-    window.localStorage.setItem("commentIds", JSON.stringify(this.commentIds));
   }
 }
 

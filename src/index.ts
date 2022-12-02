@@ -109,8 +109,9 @@ if (savedComments) {
         commentData.id,
         commentData.replyTo,
         commentData.favorited,
+        commentData.rating
       );
-      commentObj.setFavorited(commentData.favorited);
+      // commentObj.setFavorited(commentData.favorited);
       const comments: HTMLElement = <HTMLElement>(
         document.getElementById("comments")
       );
@@ -123,11 +124,13 @@ if (savedComments) {
         commentData.user,
         commentData.text,
         commentData.published,
-        commentData.id
+        commentData.id,
+        commentData.replyTo,
+        commentData.favorited,
+        commentData.rating
       );
-      commentObj.setFavorited(commentData.favorited);
-      commentObj.setReplyTo(commentData.replyTo);
-      // FIXME: BUG
+      // commentObj.setFavorited(commentData.favorited);
+      // commentObj.setReplyTo(commentData.replyTo);
       const comments: HTMLElement = getCommentsBlock(commentData.replyTo);
       comments.appendChild(commentObj.getHTMLElement());
     }

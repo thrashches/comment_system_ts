@@ -6,6 +6,7 @@ import {
   moveCommentInput,
   getCommentsBlock,
   getCommentInput,
+  getWrappedItem,
 } from "./domUtils.js";
 import { Storage } from "./storage.js";
 
@@ -19,7 +20,15 @@ class PostComment {
   favorited: boolean = false;
   replyTo: number | null = null;
 
-  constructor(user: User, text: string, published?: number, id?: number, replyTo?: number | null, favorited?: boolean) {
+  constructor(
+    user: User,
+    text: string,
+    published?: number,
+    id?: number,
+    replyTo?: number | null,
+    favorited?: boolean,
+    rating?: number
+  ) {
     if (published && id) {
       this.published = published;
       this.id = id;
@@ -27,30 +36,52 @@ class PostComment {
       this.published = Date.now();
       this.id = getUniqueCommentId();
     }
+    replyTo && (this.replyTo = replyTo);
+    favorited && (this.favorited = favorited);
+    rating && (this.rating = rating);
 
     this.text = text;
     this.user = user;
   }
 
-  setReplyTo(replyTo: number | null) {
+  public setReplyTo(replyTo: number | null): void {
     // Сеттер id комментария, на который написан ответ
     this.replyTo = replyTo;
   }
 
-  setFavorited(favorited: boolean) {
+  public setFavorited(favorited: boolean): void {
     // Сеттер для favorited
     this.favorited = favorited;
   }
 
-  switchFavorited() {
+  private switchFavorited(): void {
     // Переключает нахождение в избранном
     this.favorited = !this.favorited;
     this.saveToLocalStorage(true);
+    const favoritedBtn = document.getElementById(`favorited${this.id}`);
+    if (favoritedBtn) {
+      favoritedBtn.replaceWith(this.getFavoriteBtn());
+    }
   }
 
-  getAvatar(): HTMLElement {
+  private incRating(): void {
+    this.rating++;
+    this.saveToLocalStorage(true);
+    const ratingSpan = document.getElementById(`rating${this.id}`);
+    ratingSpan && (ratingSpan.innerText = this.rating.toString());
+  }
+
+  private decRating(): void {
+    this.rating--;
+    console.log(this.rating);
+    this.saveToLocalStorage(true);
+    const ratingSpan = document.getElementById(`rating${this.id}`);
+    ratingSpan && (ratingSpan.innerText = this.rating.toString());
+  }
+
+  private getAvatar(): HTMLElement {
     // Элемент аватара
-    const commentAvatar = this.getWrappedItem("comment__avatar");
+    const commentAvatar = getWrappedItem("comment__avatar");
     commentAvatar.setAttribute(
       "style",
       `background-image: url('${this.user.avatar}');`
@@ -58,14 +89,7 @@ class PostComment {
     return commentAvatar;
   }
 
-  getWrappedItem(cssClass: string): HTMLElement {
-    // Элемент заголовка комментария(имя пользователя/дата/реплай)
-    const wrappedItem: HTMLElement = document.createElement("div");
-    wrappedItem.classList.add(cssClass);
-    return wrappedItem;
-  }
-
-  getTimestamp(): string {
+  private getTimestamp(): string {
     // Получаем текущую дату/время в виде строки
     const date = new Date(this.published);
     return `${date.getDate()}.${
@@ -73,11 +97,9 @@ class PostComment {
     } ${date.getHours()}:${date.getMinutes()}`;
   }
 
-  getTimestampItem(): HTMLElement {
+  private getTimestampItem(): HTMLElement {
     // Возвращает div с датой и временем
-    const timestampItem: HTMLElement = this.getWrappedItem(
-      "comment__header__item"
-    );
+    const timestampItem: HTMLElement = getWrappedItem("comment__header__item");
     const timestampSpan: HTMLSpanElement = document.createElement("span");
     timestampSpan.classList.add("text__secondary");
     timestampSpan.classList.add("text-14");
@@ -87,10 +109,10 @@ class PostComment {
     return timestampItem;
   }
 
-  getHeader(): HTMLElement {
+  private getHeader(): HTMLElement {
     // Заголовок комментария
-    const header: HTMLElement = this.getWrappedItem("comment__header");
-    const fullNameWrapper: HTMLElement = this.getWrappedItem(
+    const header: HTMLElement = getWrappedItem("comment__header");
+    const fullNameWrapper: HTMLElement = getWrappedItem(
       "comment__header__item"
     );
 
@@ -102,26 +124,37 @@ class PostComment {
 
     if (this.replyTo) {
       // Если комментарий является ответом
+      const storage = new Storage();
+      const replyToElement: HTMLElement = getWrappedItem(
+        "comment__header__item"
+      );
+      const replyFullName: string | undefined = storage.getCommentData(
+        this.replyTo
+      )?.user.fullName;
+      if (replyFullName) {
+        replyToElement.innerHTML = `<a><span class="text__secondary"><i class="icon icon__answer"></i> ${replyFullName}</span></a>`;
+        header.appendChild(replyToElement);
+      }
     }
     header.appendChild(this.getTimestampItem());
     return header;
   }
 
-  getBody(): HTMLElement {
+  private getBody(): HTMLElement {
     // Текст комментария
-    const body = this.getWrappedItem("comment__body");
+    const body = getWrappedItem("comment__body");
     const p = document.createElement("p");
     p.innerText = this.text;
     body.appendChild(p);
     return body;
   }
 
-  getAnswerBtn(): HTMLElement | null {
+  private getAnswerBtn(): HTMLElement | null {
     // Кнопка ответить
     if (this.replyTo) {
       return null;
     }
-    const answerBtnWrapper = this.getWrappedItem("comment__footer__item");
+    const answerBtnWrapper = getWrappedItem("comment__footer__item");
     const answerIcon: HTMLElement = document.createElement("i");
     answerIcon.classList.add("icon");
     answerIcon.classList.add("icon__answer");
@@ -138,9 +171,10 @@ class PostComment {
     return answerBtnWrapper;
   }
 
-  getFavoriteBtn(): HTMLElement {
+  private getFavoriteBtn(): HTMLElement {
     // Кнопка избранное
-    const favoriteBtnWrapper = this.getWrappedItem("comment__footer__item");
+    const favoriteBtnWrapper = getWrappedItem("comment__footer__item");
+    favoriteBtnWrapper.setAttribute("id", `favorited${this.id}`);
     const favoritedIcon = document.createElement("i");
     favoritedIcon.classList.add("icon");
     if (this.favorited) {
@@ -164,19 +198,51 @@ class PostComment {
     return favoriteBtnWrapper;
   }
 
-  getFooter(): HTMLElement {
+  private getRatingSwitch(): HTMLElement {
+    // Кнопки рейтинга
+    const ratingWrapper = getWrappedItem("comment__footer__item");
+    const ratingSwitch = getWrappedItem("switch-wrapper");
+    const decBtn = document.createElement("button");
+    decBtn.innerText = "-";
+    decBtn.classList.add("switch", "text__warning");
+    decBtn.addEventListener("click", () => {
+      // Уменьшение рейтинга
+      this.decRating();
+    });
+    ratingSwitch.appendChild(decBtn);
+    const incBtn = document.createElement("button");
+    incBtn.innerText = "+";
+    incBtn.classList.add("switch", "text__success");
+    incBtn.addEventListener("click", () => {
+      // Увеличение рейтинга
+      this.incRating();
+    });
+    const ratingSpan = document.createElement("span");
+    console.log("draw rating", this.rating);
+    ratingSpan.innerText = this.rating.toString();
+    ratingSpan.classList.add("text__success");
+    ratingSpan.setAttribute("id", `rating${this.id}`);
+    ratingSwitch.appendChild(ratingSpan);
+    ratingSwitch.appendChild(incBtn);
+    ratingWrapper.appendChild(ratingSwitch);
+    return ratingWrapper;
+  }
+
+  private getFooter(): HTMLElement {
     // Подвал комментария
-    const footer = this.getWrappedItem("comment__footer");
+    const footer = getWrappedItem("comment__footer");
     const answerBtnWrapper = this.getAnswerBtn();
     const favoriteBtnWrapper = this.getFavoriteBtn();
+    const ratingSwitch = this.getRatingSwitch();
     if (answerBtnWrapper) {
       footer.appendChild(answerBtnWrapper);
     }
     footer.appendChild(favoriteBtnWrapper);
+    footer.appendChild(ratingSwitch);
     return footer;
   }
 
-  getHTMLElement(): HTMLElement {
+  public getHTMLElement(): HTMLElement {
     // div с комментарием, аватаром и тд
     const commentDiv = document.createElement("div");
     commentDiv.classList.add("comment");
@@ -186,7 +252,7 @@ class PostComment {
     commentDiv.appendChild(this.getBody());
     commentDiv.appendChild(this.getFooter());
     if (!this.replyTo) {
-      const answers = this.getWrappedItem("comment__answers");
+      const answers = getWrappedItem("comment__answers");
       answers.setAttribute("id", `replysTo${this.id}`);
       answers.setAttribute("data-reply-to", this.id.toString());
       answers.innerHTML = `<div id="replysToInputSeparator${this.id}" hidden></div>`;
@@ -195,44 +261,22 @@ class PostComment {
     return commentDiv;
   }
 
-  saveToLocalStorage(update: boolean = false): void {
+  public saveToLocalStorage(update: boolean = false): void {
     // Сохранение комментариев
     const storage = new Storage();
-
-    // const storage: Array<CommentType> | null = getSavedComments();
     if (update) {
+      console.log("storage");
       storage.updateCommentData(this.id, this);
     } else {
       storage.addCommentData(this);
     }
-    //   storage.push(this);
-    //   window.localStorage.setItem("comments", JSON.stringify(storage));
-    // } else {
-    //   window.localStorage.setItem("comments", JSON.stringify([this]));
-    // }
-  }
-
-  removeFromLocalStorage() {
-    const storage: Array<CommentType> | null = getSavedComments();
-    console.log(storage);
-    if (storage) {
-      for (let index = 0; index <= storage.length; index++) {
-        console.log(storage[index]);
-        if (storage[index].id === this.id) {
-          console.log("zzzzzzzzzzzzzzzz");
-          storage.splice(index, 1);
-          localStorage.setItem("comments", JSON.stringify(storage));
-        }
-      }
-    }
   }
 }
 
-function addComment(user: User, replyTo?: number) {
+function addComment(user: User, replyTo?: number): void {
   // Добавление нового комментария на страницу
   const commentInput: HTMLTextAreaElement = getCommentInput();
   if (commentInput.value.length) {
-    //   const user: User = testUsers[0];
     const counter: HTMLSpanElement = <HTMLSpanElement>(
       document.getElementById("counter")
     );

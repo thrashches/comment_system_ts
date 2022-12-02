@@ -33,4 +33,11 @@ function getCommentInput(): HTMLTextAreaElement {
   return commentInput;
 }
 
-export { moveCommentInput, getCommentsBlock, getCommentInput };
+function getWrappedItem(cssClass: string): HTMLElement {
+  // Элемент заголовка комментария(имя пользователя/дата/реплай)
+  const wrappedItem: HTMLElement = document.createElement("div");
+  wrappedItem.classList.add(cssClass);
+  return wrappedItem;
+}
+
+export { moveCommentInput, getCommentsBlock, getCommentInput, getWrappedItem };
