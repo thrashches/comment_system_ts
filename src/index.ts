@@ -28,6 +28,11 @@ const counterP: HTMLParagraphElement = <HTMLParagraphElement>(
   document.getElementById("counterP")
 );
 
+// Меню сортировки
+const sortToggle: HTMLAnchorElement = <HTMLAnchorElement>(
+  document.getElementById("sortToggle")
+);
+
 commentInput.addEventListener("focusin", () => {
   // Подветка кнопки и разворот инпута при фокусе
   commentInput.setAttribute("rows", "8");
@@ -85,11 +90,16 @@ sendBtn.addEventListener("click", () => {
   }
 });
 
-// commentInput.addEventListener("keypress", (e) => {
-//   if (e.key === "Enter" && e.ctrlKey) {
-//     addComment();
-//   }
-// });
+sortToggle.addEventListener("click", () => {
+  const sortDropdown: HTMLElement = <HTMLElement>(
+    document.getElementById("sortDropdown")
+  );
+  const sortIcon: HTMLElement = <HTMLElement>(
+    document.getElementById("sortIcon")
+  );
+  sortIcon.classList.toggle("rotated");
+  sortDropdown.classList.toggle("hidden");
+});
 
 const testUsers = [
   new User(1, "Максим Авдеенко", "https://picsum.photos/id/1/100"),

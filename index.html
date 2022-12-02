@@ -27,9 +27,15 @@
             <div class="separator"></div>
           </div>
           <div class="header__item">
-            <span class="text__secondary underline"
-              >По количеству оценок <i class="icon icon__dropdown"></i
-            ></span>
+            <div class="dropdown">
+              <span class="text__secondary underline" id="sortToggle">По количеству оценок <i class="icon icon__dropdown" id="sortIcon"></i></span>
+              <div class="dropdown__menu hidden" id="sortDropdown">
+                <div class="dropdown__menu__item"><a class="text__secondary">По дате</a></div>
+                <div class="dropdown__menu__item"><a class="text__secondary">По количеству оценок</a></div>
+                <div class="dropdown__menu__item"><a class="text__secondary">По актуальности</a></div>
+                <div class="dropdown__menu__item"><a class="text__secondary">По количеству ответов</a></div>
+              </div>
+            </div>
           </div>
           <div class="header__item">
             <span class="text__secondary underline">Избранное</span>
