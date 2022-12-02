@@ -1,7 +1,5 @@
 import { User } from "./users.js";
 import { getUniqueCommentId } from "./storage.js";
-import { getSavedComments } from "./storage.js";
-import { CommentType } from "./types.js";
 import {
   moveCommentInput,
   getCommentsBlock,
@@ -73,7 +71,6 @@ class PostComment {
 
   private decRating(): void {
     this.rating--;
-    console.log(this.rating);
     this.saveToLocalStorage(true);
     const ratingSpan = document.getElementById(`rating${this.id}`);
     ratingSpan && (ratingSpan.innerText = this.rating.toString());
@@ -218,7 +215,6 @@ class PostComment {
       this.incRating();
     });
     const ratingSpan = document.createElement("span");
-    console.log("draw rating", this.rating);
     ratingSpan.innerText = this.rating.toString();
     ratingSpan.classList.add("text__success");
     ratingSpan.setAttribute("id", `rating${this.id}`);
@@ -265,7 +261,6 @@ class PostComment {
     // Сохранение комментариев
     const storage = new Storage();
     if (update) {
-      console.log("storage");
       storage.updateCommentData(this.id, this);
     } else {
       storage.addCommentData(this);

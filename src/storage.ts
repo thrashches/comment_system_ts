@@ -67,11 +67,10 @@ class Storage {
   public updateCommentData(id: number, data: CommentType): void {
     const commentIndex = this.comments.findIndex((obj) => obj.id == id);
     this.comments[commentIndex] = data;
-    console.log(data)
     this.save();
   }
 
-  save() {
+  private save() {
     // Синхронизация с localStorage
     window.localStorage.setItem("comments", JSON.stringify(this.comments));
   }
