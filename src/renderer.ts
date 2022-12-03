@@ -112,7 +112,7 @@ class Renderer {
           );
 
           const comments: HTMLElement = getCommentsBlock(commentData.replyTo);
-          comments.appendChild(commentObj.getHTMLElement());
+          comments?.appendChild(commentObj.getHTMLElement());
         }
       }
     }

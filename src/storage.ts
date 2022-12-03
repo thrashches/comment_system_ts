@@ -1,6 +1,7 @@
 import { CommentType } from "./types.js";
 
 function initEmptyCommentsStorage() {
+  // Инициализация хранилища
   window.localStorage.setItem("comments", "[]");
   return new Array();
 }

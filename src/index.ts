@@ -37,7 +37,9 @@ const sortToggle: HTMLAnchorElement = <HTMLAnchorElement>(
 const sortRadio: NodeListOf<HTMLElement> = document.getElementsByName("sort");
 
 // Кнопка избранное вверху страницы
-const favoritedOnly: HTMLElement = <HTMLElement>document.getElementById('favoritedOnly');
+const favoritedOnly: HTMLElement = <HTMLElement>(
+  document.getElementById("favoritedOnly")
+);
 
 commentInput.addEventListener("focusin", () => {
   // Подветка кнопки и разворот инпута при фокусе
@@ -135,9 +137,9 @@ for (let element of sortRadio) {
   });
 }
 
-favoritedOnly.addEventListener('click', (event) => {
+favoritedOnly.addEventListener("click", (event) => {
   renderer.switchFavoritedOnly();
-})
+});
 
 const storage = new Storage();
 const renderer = new Renderer(storage);

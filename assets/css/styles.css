@@ -170,7 +170,9 @@ body {
 }
 
 .header__item {
-  gap: 5px;
+  gap: 25px;
+  display: flex;
+  align-items: center;
 }
 
 .comment__header {
