@@ -194,7 +194,7 @@ body {
   display: flex;
   gap: 15px;
   grid-area: footer;
-  align-items: baseline;
+  align-items: center;
 }
 
 .comment__answers {
@@ -219,6 +219,40 @@ body {
 .btn__success {
   background: #abd873;
   color: #000000;
+}
+
+.choice {
+  position: absolute;
+  z-index: 0;
+  opacity: 0;
+}
+
+.choice+label {
+  display: inline-flex;
+  align-items: center;
+  user-select: none;
+}
+
+.choice+label::before {
+  content: '';
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  flex-grow: 0;
+  /* border: 1px solid #000000;
+  border-radius: 0.25em; */
+  margin-right: 0.5em;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 50% 50%;
+}
+
+.choice:checked+label::before {
+  width: 15px;
+  height: 15px;
+  background-image: url('../svg/checkbox.svg');
+  background-size: cover;
 }
 
 .switch-wrapper {

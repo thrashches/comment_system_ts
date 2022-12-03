@@ -1,7 +1,7 @@
 import { User } from "./users.js";
-import { PostComment, addComment } from "./comments.js";
-import { getSavedComments } from "./storage.js";
-import { getCommentsBlock } from "./domUtils.js";
+import { addComment } from "./comments.js";
+import { Storage } from "./storage.js";
+import Renderer from "./renderer.js";
 
 // Поле ввода комментария
 const commentInput: HTMLTextAreaElement = <HTMLTextAreaElement>(
@@ -32,6 +32,12 @@ const counterP: HTMLParagraphElement = <HTMLParagraphElement>(
 const sortToggle: HTMLAnchorElement = <HTMLAnchorElement>(
   document.getElementById("sortToggle")
 );
+
+// Элементы меню сортировки
+const sortRadio: NodeListOf<HTMLElement> = document.getElementsByName("sort");
+
+// Кнопка избранное вверху страницы
+const favoritedOnly: HTMLElement = <HTMLElement>document.getElementById('favoritedOnly');
 
 commentInput.addEventListener("focusin", () => {
   // Подветка кнопки и разворот инпута при фокусе
@@ -107,42 +113,32 @@ const testUsers = [
   new User(3, "Джунбокс3000", "https://picsum.photos/id/3/100"),
 ];
 
-const savedComments = getSavedComments();
-if (savedComments) {
-  const mainIds: Array<number> = new Array();
-  for (let commentData of savedComments) {
-    if (!commentData.replyTo) {
-      const commentObj = new PostComment(
-        commentData.user,
-        commentData.text,
-        commentData.published,
-        commentData.id,
-        commentData.replyTo,
-        commentData.favorited,
-        commentData.rating
+for (let element of sortRadio) {
+  // Смена сортировки
+  element.addEventListener("change", (event) => {
+    const sortMap = {
+      byDate: "По дате",
+      byRating: "По количеству оценок",
+      byActual: "По актуальности",
+      byAnswers: "По количеству ответов",
+    };
+    const input: EventTarget | null = event.target;
+    if (input instanceof HTMLInputElement) {
+      const sortToggleText: HTMLSpanElement = <HTMLSpanElement>(
+        document.getElementById("sortToggleText")
       );
-      // commentObj.setFavorited(commentData.favorited);
-      const comments: HTMLElement = <HTMLElement>(
-        document.getElementById("comments")
-      );
-      comments.appendChild(commentObj.getHTMLElement());
+      type ObjectKey = keyof typeof sortMap;
+      const sortText = input.value as ObjectKey;
+      sortToggleText.textContent = sortMap[sortText];
+      renderer.setOrdering(input.value);
     }
-  }
-  for (let commentData of savedComments) {
-    if (commentData.replyTo) {
-      const commentObj = new PostComment(
-        commentData.user,
-        commentData.text,
-        commentData.published,
-        commentData.id,
-        commentData.replyTo,
-        commentData.favorited,
-        commentData.rating
-      );
-      // commentObj.setFavorited(commentData.favorited);
-      // commentObj.setReplyTo(commentData.replyTo);
-      const comments: HTMLElement = getCommentsBlock(commentData.replyTo);
-      comments.appendChild(commentObj.getHTMLElement());
-    }
-  }
+  });
 }
+
+favoritedOnly.addEventListener('click', (event) => {
+  renderer.switchFavoritedOnly();
+})
+
+const storage = new Storage();
+const renderer = new Renderer(storage);
+renderer.renderComments();

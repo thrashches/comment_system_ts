@@ -36,6 +36,14 @@ class Storage {
     }
   }
 
+  public refresh(): void {
+    // Обновление комментариев в Storage
+    const savedComments = getSavedComments();
+    if (savedComments) {
+      this.comments = savedComments;
+    }
+  }
+
   public getCommentData(id: number): CommentType | null {
     // Получение из localStorage по id
     const commentIndex: number | undefined = this.comments.findIndex(
@@ -56,6 +64,13 @@ class Storage {
         break;
       }
     }
+  }
+
+  public getAnswersCount(id: number): number {
+    // Получение количества ответов на комментарий(для сортировки)
+    return this.comments.filter((x) => {
+      return x.replyTo === id;
+    }).length;
   }
 
   public addCommentData(data: CommentType): void {

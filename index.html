@@ -28,17 +28,62 @@
           </div>
           <div class="header__item">
             <div class="dropdown">
-              <span class="text__secondary underline" id="sortToggle">По количеству оценок <i class="icon icon__dropdown" id="sortIcon"></i></span>
+              <span class="text__secondary underline" id="sortToggle"
+                ><span id="sortToggleText">По количеству оценок</span>
+                <i class="icon icon__dropdown" id="sortIcon"></i
+              ></span>
               <div class="dropdown__menu hidden" id="sortDropdown">
-                <div class="dropdown__menu__item"><a class="text__secondary">По дате</a></div>
-                <div class="dropdown__menu__item"><a class="text__secondary">По количеству оценок</a></div>
-                <div class="dropdown__menu__item"><a class="text__secondary">По актуальности</a></div>
-                <div class="dropdown__menu__item"><a class="text__secondary">По количеству ответов</a></div>
+                <div class="dropdown__menu__item" id="sort">
+                  <input
+                    type="radio"
+                    name="sort"
+                    id="byDate"
+                    class="choice"
+                    value="byDate"
+                  />
+                  <label for="byDate" class="text__secondary">По дате</label>
+                </div>
+                <div class="dropdown__menu__item">
+                  <input
+                    type="radio"
+                    name="sort"
+                    id="byRating"
+                    class="choice"
+                    value="byRating"
+                  />
+                  <label for="byRating" class="text__secondary"
+                    >По количеству оценок</label
+                  >
+                </div>
+                <div class="dropdown__menu__item">
+                  <input
+                    type="radio"
+                    name="sort"
+                    id="byActual"
+                    class="choice"
+                    value="byActual"
+                  />
+                  <label for="byActual" class="text__secondary"
+                    >По актуальности</label
+                  >
+                </div>
+                <div class="dropdown__menu__item">
+                  <input
+                    type="radio"
+                    name="sort"
+                    id="byAnswers"
+                    class="choice"
+                    value="byAnswers"
+                  />
+                  <label for="byAnswers" class="text__secondary"
+                    >По количеству ответов</label
+                  >
+                </div>
               </div>
             </div>
           </div>
-          <div class="header__item">
-            <span class="text__secondary underline">Избранное</span>
+          <div class="header__item" id="favoritedOnly">
+            <span class="text__secondary underline" id="favoritedOnlySpan">Избранное</span>
             <i class="icon icon__favorites"></i>
           </div>
         </div>
@@ -76,7 +121,7 @@
             <div class="comment__footer"></div>
           </div>
           <div id="commentInputSeparator" hidden></div>
-          <div class="comment">
+          <!-- <div class="comment">
             <div
               class="comment__avatar"
               style="
@@ -174,7 +219,7 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
     </main>
