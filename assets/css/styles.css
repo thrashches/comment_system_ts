@@ -83,6 +83,10 @@ a:hover {
   text-decoration: none;
 }
 
+p {
+  overflow-wrap: anywhere;
+}
+
 ul li {
   list-style: none;
 }

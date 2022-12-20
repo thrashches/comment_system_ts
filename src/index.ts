@@ -56,16 +56,20 @@ commentInput.addEventListener("input", () => {
   const newCommentLength: number = commentInput.value.length;
   counter.textContent = newCommentLength.toString();
   if (newCommentLength > 1000) {
-    const warningMessage: HTMLParagraphElement = document.createElement("p");
-    warningMessage.setAttribute("id", "warningMessage");
-    warningMessage.classList.add("text__warning");
-    warningMessage.classList.add("text-14");
-    warningMessage.innerText = "Слишком длинное сообщение";
-    btnWrapper.classList.add("top-offset");
-    counterP.classList.replace("text__secondary", "text__warning");
-    sendBtn.disabled = true;
-    sendBtn.classList.replace("btn__success", "btn__default");
-    btnWrapper.insertBefore(warningMessage, sendBtn);
+    const existingWarning: HTMLElement | null =
+      document.getElementById("warningMessage");
+    if (!existingWarning) {
+      const warningMessage: HTMLParagraphElement = document.createElement("p");
+      warningMessage.setAttribute("id", "warningMessage");
+      warningMessage.classList.add("text__warning");
+      warningMessage.classList.add("text-14");
+      warningMessage.innerText = "Слишком длинное сообщение";
+      btnWrapper.classList.add("top-offset");
+      counterP.classList.replace("text__secondary", "text__warning");
+      sendBtn.disabled = true;
+      sendBtn.classList.replace("btn__success", "btn__default");
+      btnWrapper.insertBefore(warningMessage, sendBtn);
+    }
   } else {
     const warningMessage: HTMLElement | null =
       document.getElementById("warningMessage");
